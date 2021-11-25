@@ -1,0 +1,204 @@
+### Invocar al servidor en mi maquina: localhost
+GET http://localhost:3000/
+
+###Eleccion de la ubicacion de la tienda en que pais esta
+GET http://localhost:3000/store/2
+Content-Type: application/json 
+
+###Agregar nuevo cliente
+POST http://localhost:3000/customer
+Content-Type: application/json
+
+{
+  "first_name": "g",
+  "last_name": "Perez",
+  "email": "g@sakila.com",
+  "addres_id": 5,
+  "active": 1,
+  "create_date": "2016-08-29T09:12:33.001Z",
+  "last_update": "2016-08-29T09:12:33.001Z"
+}
+
+###Obtener cliente por el id
+GET http://localhost:3000/customer/2
+Content-Type: application/json
+
+###Actualizacion de datos de un cliente
+PUT http://localhost:3000/customer/2
+Content-Type: application/json
+
+{
+  "store_id":1,
+  "first_name": "Gabriel",
+  "last_name": "Perez",
+  "email": "g@sakila.com",
+  "addres_id": 5,
+  "active": 1,
+  "create_date": "2016-08-29T09:12:33.001Z",
+  "last_update": "2016-08-29T09:12:33.001Z"
+}
+
+###Agregar un nuevo pago
+POST http://localhost:3000/payment
+Content-Type: application/json
+
+{
+  "customer_id": 2,
+  "staff_id": 1,
+  "rental_id": 3,
+  "amount": 22.5,
+  "payment_date": "2016-08-29T09:12:33.001Z",
+  "last_update": "2016-08-29T09:12:33.001Z"
+}
+
+###Obtener pago por su id
+GET http://localhost:3000/payment/1
+Content-Type: application/json
+
+###Actualizar un pago
+PUT http://localhost:3000/payment/1
+Content-Type: application/json
+
+{
+  "customer_id": 2,
+  "staff_id": 1,
+  "rental_id": 3,
+  "amount": 22.5,
+  "payment_date": "2021-08-29T09:12:33.001Z",
+  "last_update": "2021-08-29T09:12:33.001Z"
+}
+
+###Obtener un listado de los paises registrados
+GET http://localhost:3000/countries
+Content-Type: application/json
+
+###Obtener un listado de las ciudades registradas
+GET http://localhost:3000/cities
+Content-Type: application/json
+
+###Obtener un listado de las direcciones registradas
+GET http://localhost:3000/addresses
+Content-Type: application/json
+
+###Agregar una nueva direccion
+POST http://localhost:3000/addresses
+Content-Type: application/json
+
+{
+  "address": "15 de obrajes",
+  "address2": "12 de obrajes",
+  "district": "Zona sur",
+  "city_id": 514,
+  "postal_code": 514454,
+  "phone": 15151514454,
+  "last_update": "2016-08-29T09:12:33.001Z"
+}
+
+###Obtener direccion por su id
+GET http://localhost:3000/address/1
+Content-Type: application/json
+
+###Agregar una nueva pelicula
+POST http://localhost:3000/film
+Content-Type: application/json
+
+{
+  "film_id": 12,
+  "title": "Maude Mod",
+  "description": "Descripcion de Maude MOD",
+  "release_year": "2021",
+  "language_id": {
+    "id_language": 1,
+    "name": "English",
+    "last_update": "2016-08-29T09:12:33.001Z"
+  },
+  "original_language_id": {
+    "id_language": 1,
+    "name": "English",
+    "last_update": "2016-08-29T09:12:33.001Z"
+  },
+  "rental_duration": 2,
+  "rental_rate": 0.99,
+  "length": 25,
+  "replacement_cost": 20.5,
+  "rating": 0,
+  "special_features": [
+    "string"
+  ],
+  "last_update": "string"
+}
+
+###Actualizar una pelicula
+PUT http://localhost:3000/film
+Content-Type: application/json
+
+{
+  "film_id": 12,
+  "title": "Maude Mod",
+  "description": "Descripcion de Maude MOD",
+  "release_year": "2021",
+  "language_id": {
+    "id_language": 1,
+    "name": "English",
+    "last_update": "2016-08-29T09:12:33.001Z"
+  },
+  "original_language_id": {
+    "id_language": 1,
+    "name": "English",
+    "last_update": "2016-08-29T09:12:33.001Z"
+  },
+  "rental_duration": 2,
+  "rental_rate": 0.99,
+  "length": 25,
+  "replacement_cost": 20.5,
+  "rating": 0,
+  "special_features": [
+    "string"
+  ],
+  "last_update": "string"
+}
+
+###Obtener pelicula por su id
+GET http://localhost:3000/film/1
+Content-Type: application/json
+
+###Eliminar pelicula por su id
+DELETE http://localhost:3000/film/1
+Content-Type: application/json
+
+###Buscar una pelicula por el titulo que tiene
+GET http://localhost:3000/film/lo+que+el+viento+se+llevo
+Content-Type: application/json
+
+###Buscar una pelicula por el actor que tiene
+GET http://localhost:3000/film/Tom
+Content-Type: application/json
+
+###Agregar renta de pelicula
+POST http://localhost:3000/rental
+Content-Type: application/json
+	
+{
+  "rental_date": "2021-08-29T09:12:33.001Z",
+  "inventory_id": 2,
+  "customer_id": 2,
+  "return_date": "2021-08-29T09:12:33.001Z",
+  "staff_id": 2,
+  "last_update": "2021-08-29T09:12:33.001Z"
+}
+
+###Eliminar todos elementos de carrito
+DELETE http://localhost:3000/cart
+Content-Type: application/json
+
+###Agregar pelicula a carrito
+POST http://localhost:3000/cart/3
+Content-Type: application/json
+
+###Eliminar pelicula de carrito
+DELETE http://localhost:3000/cart/2
+Content-Type: application/json
+
+###Obtener todos los elementos del carrito
+GET http://localhost:3000/cart
+Content-Type: application/json
