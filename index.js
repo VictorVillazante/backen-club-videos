@@ -193,10 +193,30 @@ app.get("/address/:id", (req, res, next) => {
 app.post("/film", jsonParser, (req, res, next) => {
     console.log("Registrar nueva pelicula");
     console.log(req.body);
+    const sql = "insert into film values (null,'" + req.body.title + "','" + req.body.description + "','" + req.body.release_year + "'," + req.body.language_id + "," + req.body.original_language_id + "," + req.body.rental_duration + "," + req.body.rental_rate + "," + req.body.length + "," + req.body.replacement_cost + "," + req.body.rating + ",'" + req.body.special_features + "','" + req.body.last_update + "')";
+    console.log(sql);
+    conn.query(sql,
+        function(err, result) {
+            if (err) throw err;
+            //console.log("Result: " + result);
+            //res.json(result);
+        }
+    );
 });
-app.put("/film", jsonParser, (req, res) => {
+app.put("/film/:id", jsonParser, (req, res) => {
     console.log("Actualizar nueva pelicula");
     console.log(req.body);
+    var idPelicula = req.params.id;
+    console.log(idPelicula);
+    const sql = "update film set title='" + req.body.title + "',description='" + req.body.description + "',release_year='" + req.body.release_year + "',language_id=" + req.body.language_id + ",original_language_id=" + req.body.original_language_id + ",rental_duration=" + req.body.rental_duration + ",rental_rate=" + req.body.rental_rate + ",length=" + req.body.length + ",replacement_cost=" + req.body.replacement_cost + ",rating=" + req.body.rating + ",special_features='" + req.body.special_features + "',last_update='" + req.body.last_update + "' where film_id="+idPelicula;
+    console.log(sql);
+    conn.query(sql,
+        function(err, result) {
+            if (err) throw err;
+            //console.log("Result: " + result);
+            //res.json(result);
+        }
+    );
 });
 app.get("/film/:id", (req, res, next) => {
     console.log("Obtener nueva pelicula con id");
@@ -215,13 +235,7 @@ app.delete("/film/:id", (req, res, next) => {
     console.log("Eliminar una pelicula por id");
     var idPelicula = req.params.id;
     console.log(idPelicula);
-
-});
-app.get("/film/:title", (req, res, next) => {
-    console.log("Buscar una pelicula por el titulo que tiene");
-    var tituloPelicula = req.params.titile;
-    console.log(tituloPelicula);
-    const sql = "SELECT * FROM film WHERE title like '%" + tituloPelicula+"%'" ;
+    const sql = "DELETE from film WHERE film_id=" + idPelicula ;
     console.log(sql);
     let resultQuery;
     conn.query(sql,
@@ -231,10 +245,69 @@ app.get("/film/:title", (req, res, next) => {
         }
     );
 });
-app.get("/film/:actor", (req, res, next) => {
+app.get("/film/title/:title", (req, res, next) => {
+    console.log("Buscar una pelicula por el titulo que tiene");
+    var tituloPelicula = req.params.title;
+    console.log(tituloPelicula);
+    tituloPelicula=tituloPelicula.replace(/&/g," ");
+    const sql = "SELECT f.film_id, " +
+    "   f.title, " +
+    "   f.description, " +
+    "   f.release_year, " +
+    "   l.name as language , " +
+    "   ol.name as original_language, " +
+    "   f.length, " +
+    "   f.rating, " +
+    "   f.special_features, " +
+    "   f.last_update " +
+    " FROM film f " +
+    "     LEFT JOIN language l ON ( f.language_id = l.language_id) " +
+    "     LEFT JOIN language ol ON ( f.original_language_id = ol.language_id) " +
+    " WHERE " +
+    "   UPPER(title) LIKE ( '%"+tituloPelicula+"%' )" ;
+    console.log(sql);
+    let resultQuery;
+    conn.query(sql,
+        function(err, result) {
+            if (err) throw err;
+            res.send(result);
+        }
+    );
+});
+app.get("/film/actor/:actor", (req, res, next) => {
     console.log("Buscar una pelicula por actor");
     var actorPelicula = req.params.actor;
     console.log(actorPelicula);
+    var full_name=actorPelicula.split("&");
+
+    const sql = "SELECT f.film_id, "+
+    "f.title, "+
+    "f.description, "+
+    "f.release_year, "+
+    "l.name as language , "+
+    "ol.name as original_language, "+
+    "f.length, "+
+    "f.rating, "+
+    "f.special_features, "+
+    "f.last_update, "+
+    "a.first_name, "+
+    "a.last_name "+
+    "FROM film f "+
+    "LEFT JOIN language l ON ( f.language_id = l.language_id) "+
+    "LEFT JOIN language ol ON ( f.original_language_id = ol.language_id) "+
+    "JOIN film_actor fa ON (f.film_id=fa.film_id) "+
+    "JOIN actor a ON (a.actor_id=fa.actor_id) "+
+    "WHERE "+
+    "a.first_name='"+full_name[0]+"' AND "+
+    "a.last_name='"+full_name[1]+"' ";
+    console.log(sql);
+    let resultQuery;
+    conn.query(sql,
+        function(err, result) {
+            if (err) throw err;
+            res.send(result);
+        }
+    );
 });
 //rental
 app.post("/rental", jsonParser, (req, res, next) => {

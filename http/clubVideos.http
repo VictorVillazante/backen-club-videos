@@ -103,75 +103,53 @@ POST http://localhost:3000/film
 Content-Type: application/json
 
 {
-  "film_id": 12,
-  "title": "Maude Mod",
+  "title": "Matrix 4",
   "description": "Descripcion de Maude MOD",
   "release_year": "2021",
-  "language_id": {
-    "id_language": 1,
-    "name": "English",
-    "last_update": "2016-08-29T09:12:33.001Z"
-  },
-  "original_language_id": {
-    "id_language": 1,
-    "name": "English",
-    "last_update": "2016-08-29T09:12:33.001Z"
-  },
+  "language_id": 1,
+  "original_language_id": null,
   "rental_duration": 2,
   "rental_rate": 0.99,
   "length": 25,
   "replacement_cost": 20.5,
   "rating": 0,
-  "special_features": [
-    "string"
-  ],
-  "last_update": "string"
+  "special_features": "Trailers",
+  "last_update": "2006-02-15 05:03:42"
 }
 
 ###Actualizar una pelicula
-PUT http://localhost:3000/film
+PUT http://localhost:3000/film/1001
 Content-Type: application/json
 
 {
-  "film_id": 12,
   "title": "Maude Mod",
   "description": "Descripcion de Maude MOD",
   "release_year": "2021",
-  "language_id": {
-    "id_language": 1,
-    "name": "English",
-    "last_update": "2016-08-29T09:12:33.001Z"
-  },
-  "original_language_id": {
-    "id_language": 1,
-    "name": "English",
-    "last_update": "2016-08-29T09:12:33.001Z"
-  },
+  "language_id": 1,
+  "original_language_id": null,
   "rental_duration": 2,
   "rental_rate": 0.99,
   "length": 25,
   "replacement_cost": 20.5,
   "rating": 0,
-  "special_features": [
-    "string"
-  ],
-  "last_update": "string"
+  "special_features": "Trailers",
+  "last_update": "2006-02-15 05:03:42"
 }
 
 ###Obtener pelicula por su id
-GET http://localhost:3000/film/1
+GET http://localhost:3000/film/5
 Content-Type: application/json
 
 ###Eliminar pelicula por su id
-DELETE http://localhost:3000/film/1
+DELETE http://localhost:3000/film/1002
 Content-Type: application/json
 
-###Buscar una pelicula por el titulo que tiene
-GET http://localhost:3000/film/lo+que+el+viento+se+llevo
+###Buscar una pelicula por el titulo que tiene & funciona como espacio
+GET http://localhost:3000/film/title/FACTORY
 Content-Type: application/json
 
-###Buscar una pelicula por el actor que tiene
-GET http://localhost:3000/film/Tom
+###Buscar una pelicula por el actor que tiene & funciona como espacio
+GET http://localhost:3000/film/actor/ED
 Content-Type: application/json
 
 ###Agregar renta de pelicula
