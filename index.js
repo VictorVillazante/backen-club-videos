@@ -51,7 +51,7 @@ app.get("/store/:id", (req, res, next) => {
 //customer
 app.post("/customer", jsonParser, (req, res, next) => {
     console.log("Agregar nuevo cliente");
-    const sql = "insert into customer values (null,"+idPais+",'" + req.body.first_name.toString() + "','" + req.body.last_name.toString() + "','" + req.body.email.toString() + "'," + req.body.addres_id + "," + req.body.active + ",'" + req.body.create_date + "','" + req.body.last_update + "')";
+    const sql = "insert into customer values (null,"+idPais+",'" + req.body.first_name.toString() + "','" + req.body.last_name.toString() + "','" + req.body.email.toString() + "',(SELECT max(address_id) FROM address)," + req.body.active + ",'" + req.body.create_date + "','" + req.body.last_update + "')";
     console.log(sql);
     conn.query(sql,
         function(err, result) {
@@ -103,7 +103,8 @@ app.get("/customer/email/:correo", (req, res, next) => {
 //payment
 app.post("/payment", jsonParser, (req, res, next) => {
     console.log("Agregar un nuevo pago");
-    const sql = "insert into payment values (null," + req.body.customer_id + "," + req.body.staff_id + "," + req.body.rental_id + "," + req.body.amount + ",'" + req.body.payment_date + "','" + req.body.last_update + "')";
+    const sql = "insert into payment values (null," + req.body.customer_id + "," + req.body.staff_id + ",(SELECT max(rental_id) FROM rental)," + req.body.amount + ",'" + req.body.payment_date + "','" + req.body.last_update + "')";
+    console.log(sql);
     conn.query(sql,
         function(err, result) {
             if (err) throw err;
