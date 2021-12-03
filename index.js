@@ -45,6 +45,7 @@ var idPais=1;
 app.get("/store/:id", (req, res, next) => {
     console.log("Eleccion de la ubicacion de la tienda en que pais esta");
     idPais = req.params.id;
+    console.log(idPais)
     res.send("Id de pais guardado " + idPais);
 });
 //customer
@@ -82,6 +83,20 @@ app.put("/customer/:id", jsonParser, (req, res) => {
     conn.query(sql,
         function(err, result) {
             if (err) throw err;
+        }
+    );
+});
+app.get("/customer/email/:correo", (req, res, next) => {
+    console.log("Obtener customer  por correo");
+    var correo = req.params.correo;
+    console.log(correo);
+    const sql = "SELECT * FROM customer WHERE email='" + correo+"'" ;
+    console.log(sql);
+    let resultQuery;
+    conn.query(sql,
+        function(err, result) {
+            if (err) throw err;
+            res.send(result);
         }
     );
 });
@@ -189,6 +204,7 @@ app.get("/address/:id", (req, res, next) => {
         }
     );
 });
+
 //film
 app.post("/film", jsonParser, (req, res, next) => {
     console.log("Registrar nueva pelicula");
@@ -250,6 +266,7 @@ app.get("/film/title/:title", (req, res, next) => {
     var tituloPelicula = req.params.title;
     console.log(tituloPelicula);
     tituloPelicula=tituloPelicula.replace(/&/g," ");
+    tituloPelicula=tituloPelicula.toUpperCase();
     const sql = "SELECT f.film_id, " +
     "   f.title, " +
     "   f.description, " +
@@ -259,12 +276,17 @@ app.get("/film/title/:title", (req, res, next) => {
     "   f.length, " +
     "   f.rating, " +
     "   f.special_features, " +
-    "   f.last_update " +
+    "   f.last_update, " +
+    "   i.inventory_id, "+
+    "   i.store_id "+ 
     " FROM film f " +
     "     LEFT JOIN language l ON ( f.language_id = l.language_id) " +
     "     LEFT JOIN language ol ON ( f.original_language_id = ol.language_id) " +
+    "     JOIN inventory i on i.film_id=f.film_id    "+
     " WHERE " +
-    "   UPPER(title) LIKE ( '%"+tituloPelicula+"%' )" ;
+    "   UPPER(title) LIKE ( '%"+tituloPelicula+"%' ) "+
+    "   AND i.store_id="+idPais+" "+
+    "   GROUP BY (f.title)";
     console.log(sql);
     let resultQuery;
     conn.query(sql,
@@ -279,7 +301,10 @@ app.get("/film/actor/:actor", (req, res, next) => {
     var actorPelicula = req.params.actor;
     console.log(actorPelicula);
     var full_name=actorPelicula.split("&");
-
+    var n=full_name[0].toUpperCase();
+    var a=full_name[1].toUpperCase();
+    console.log(a);
+    console.log(n);
     const sql = "SELECT f.film_id, "+
     "f.title, "+
     "f.description, "+
@@ -291,15 +316,20 @@ app.get("/film/actor/:actor", (req, res, next) => {
     "f.special_features, "+
     "f.last_update, "+
     "a.first_name, "+
-    "a.last_name "+
+    "a.last_name, "+
+    "i.inventory_id, "+
+    "i.store_id "+
     "FROM film f "+
     "LEFT JOIN language l ON ( f.language_id = l.language_id) "+
     "LEFT JOIN language ol ON ( f.original_language_id = ol.language_id) "+
+    "JOIN inventory i ON i.film_id=f.film_id "+
     "JOIN film_actor fa ON (f.film_id=fa.film_id) "+
     "JOIN actor a ON (a.actor_id=fa.actor_id) "+
     "WHERE "+
-    "a.first_name='"+full_name[0]+"' AND "+
-    "a.last_name='"+full_name[1]+"' ";
+    "(a.first_name) LIKE ('%"+n+"%') AND "+
+    "(a.last_name) LIKE ('%"+a+"%') AND "+
+    "i.store_id="+idPais+" "+
+    "GROUP BY (f.title)";
     console.log(sql);
     let resultQuery;
     conn.query(sql,
@@ -333,13 +363,15 @@ app.post("/cart/:id", jsonParser, (req, res) => {
     console.log("Agregar pelicula a carrito");
     var idPelicula = req.params.id;
     console.log(idPelicula);
-    const sql = "SELECT * FROM film WHERE film_id=" + idPelicula ;
+    const sql = "SELECT i.inventory_id,i.store_id,f.title,f.description,f.rating,f.special_features,f.length,f.rental_rate,f.rental_duration FROM inventory i JOIN film f on i.film_id=f.film_id WHERE inventory_id=" + idPelicula ;
     let resultQuery;
     conn.query(sql,
         function(err, result) {
             if (err) throw err;
             res.send(result);
+            //carrito.push(result[0]["inventory_id"]);
             carrito.push(result[0]);
+            console.log(carrito);
         }
     );
 });
@@ -350,17 +382,56 @@ app.delete("/cart/:id", (req, res, next) => {
     var i=0;
     console.log("Buscando...");
     for(i=0;i<carrito.length;i++){
-        console.log(carrito[i].film_id);
+        console.log(carrito[i].inventory_id);
         console.log(carrito[i].title);
-        if(carrito[i].film_id==idPelicula){
+        if(carrito[i].inventory_id==idPelicula){
             console.log("Encontrado");
             carrito.splice(i, 1);
+            res.send("ok");
         }
     }
 });
 app.get("/cart", (req, res, next) => {
     console.log("Obtener todos los elementos del carrito");
     res.send(carrito);
+});
+app.get("/estrenos", (req, res, next) => {
+    console.log("Obtener 20 primeros estrenos");
+    const sql = "SELECT i.inventory_id,f.film_id,f.title,f.release_year FROM `film` f JOIN inventory i on i.film_id=f.film_id WHERE i.store_id="+idPais+" GROUP BY (f.title) ORDER BY f.release_year DESC LIMIT 20";
+    let resultQuery;
+    conn.query(sql,
+        function(err, result) {
+            if (err) throw err;
+            res.json(result);
+        }
+    );
+});
+app.get("/masRentadasTodosLosTiempos", (req, res, next) => {
+    console.log("Obtener 20 mas rentadas de todos los tiempos");
+    const sql = "SELECT i.inventory_id,f.title,COUNT(f.title) as rentas FROM rental r JOIN inventory i ON ( r.inventory_id = i.inventory_id) JOIN film f ON ( i.film_id = f.film_id) WHERE i.store_id="+idPais+" GROUP BY f.title ORDER BY rentas DESC LIMIT 20";
+    let resultQuery;
+    console.log(sql);
+    conn.query(sql,
+        function(err, result) {
+            if (err) throw err;
+            res.json(result);
+        }
+    );
+});
+app.get("/masRentadasUltimaSemana/:fechas", (req, res, next) => {
+    console.log("Obtener 20 mas rentadas ultima semana");
+    var fechas = req.params.fechas;
+    var fechasA = fechas.split("&");
+    console.log(fechasA);
+    const sql = "SELECT i.inventory_id,f.title,COUNT(f.title) as rentas FROM rental r JOIN inventory i ON ( r.inventory_id = i.inventory_id) JOIN film f ON ( i.film_id = f.film_id) WHERE i.store_id="+idPais+" AND r.rental_date>'"+fechasA[0]+"' AND r.rental_date<'"+fechasA[1]+"' GROUP BY f.title ORDER BY rentas DESC LIMIT 20";
+    console.log(sql);
+    let resultQuery;
+    conn.query(sql,
+        function(err, result) {
+            if (err) throw err;
+            res.json(result);
+        }
+    );
 });
 
 /*function obtenerUnRegistroPorIdDeTabla(tabla,nombre_id,id){

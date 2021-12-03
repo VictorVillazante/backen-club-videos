@@ -2,8 +2,10 @@
 GET http://localhost:3000/
 
 ###Eleccion de la ubicacion de la tienda en que pais esta
-GET http://localhost:3000/store/2
+GET http://localhost:3000/store/1
 Content-Type: application/json 
+
+
 
 ###Agregar nuevo cliente
 POST http://localhost:3000/customer
@@ -37,6 +39,10 @@ Content-Type: application/json
   "create_date": "2016-08-29T09:12:33.001Z",
   "last_update": "2016-08-29T09:12:33.001Z"
 }
+
+###Obtener datos de un cliente por email
+GET http://localhost:3000/customer/email/MARY.SMITH@sakilacustomer.org
+Content-Type: application/json 
 
 ###Agregar un nuevo pago
 POST http://localhost:3000/payment
@@ -103,9 +109,9 @@ POST http://localhost:3000/film
 Content-Type: application/json
 
 {
-  "title": "Matrix 4",
+  "title": "Avengers end game",
   "description": "Descripcion de Maude MOD",
-  "release_year": "2021",
+  "release_year": "2019",
   "language_id": 1,
   "original_language_id": null,
   "rental_duration": 2,
@@ -145,11 +151,11 @@ DELETE http://localhost:3000/film/1002
 Content-Type: application/json
 
 ###Buscar una pelicula por el titulo que tiene & funciona como espacio
-GET http://localhost:3000/film/title/FACTORY
+GET http://localhost:3000/film/title/a&
 Content-Type: application/json
 
 ###Buscar una pelicula por el actor que tiene & funciona como espacio
-GET http://localhost:3000/film/actor/ED
+GET http://localhost:3000/film/actor/p&d&a
 Content-Type: application/json
 
 ###Agregar renta de pelicula
@@ -170,13 +176,25 @@ DELETE http://localhost:3000/cart
 Content-Type: application/json
 
 ###Agregar pelicula a carrito
-POST http://localhost:3000/cart/3
+POST http://localhost:3000/cart/1020
 Content-Type: application/json
 
 ###Eliminar pelicula de carrito
-DELETE http://localhost:3000/cart/2
+DELETE http://localhost:3000/cart/1000
 Content-Type: application/json
 
 ###Obtener todos los elementos del carrito
 GET http://localhost:3000/cart
+Content-Type: application/json
+
+###Obtener estrenos de peliculas
+GET http://localhost:3000/estrenos
+Content-Type: application/json
+
+###Obtener mas rentadas de todos los tiempos de la pelicula
+GET http://localhost:3000/masRentadasTodosLosTiempos
+Content-Type: application/json
+
+###Mas rentadas ultima semana
+GET http://localhost:3000/masRentadasUltimaSemana/2021-11-25&2021-12-02
 Content-Type: application/json
