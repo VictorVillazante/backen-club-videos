@@ -56,6 +56,7 @@ app.post("/customer", jsonParser, (req, res, next) => {
     conn.query(sql,
         function(err, result) {
             if (err) throw err;
+            res.send("ok");
             //console.log("Result: " + result);
             //res.json(result);
         }
@@ -362,20 +363,37 @@ app.delete("/cart", (req, res, next) => {
 });
 app.post("/cart/:id", jsonParser, (req, res) => {
     console.log("Agregar pelicula a carrito");
-    var idPelicula = req.params.id;
-    console.log(idPelicula);
-    const sql = "SELECT i.inventory_id,i.store_id,f.title,f.description,f.rating,f.special_features,f.length,f.rental_rate,f.rental_duration FROM inventory i JOIN film f on i.film_id=f.film_id WHERE inventory_id=" + idPelicula ;
-    let resultQuery;
-    conn.query(sql,
-        function(err, result) {
-            if (err) throw err;
-            res.send(result);
-            //carrito.push(result[0]["inventory_id"]);
-            carrito.push(result[0]);
-            console.log(carrito);
-        }
-    );
+    if(carrito.length<4){
+        var idPelicula = req.params.id;
+        console.log(idPelicula);
+        const sql = "SELECT i.inventory_id,i.store_id,f.title,f.description,f.rating,f.special_features,f.length,f.rental_rate,f.rental_duration FROM inventory i JOIN film f on i.film_id=f.film_id WHERE inventory_id=" + idPelicula ;
+        let resultQuery;
+        conn.query(sql,
+            function(err, result) {
+                if (err) throw err;
+                res.send(result);
+                //carrito.push(result[0]["inventory_id"]);
+                if(verificaPeliculaNoExistente(result[0]["title"])==0){
+                    carrito.push(result[0]);
+                }
++                console.log(carrito);
+            }
+        );
+    }else{
+        res.send("no se puede agregar mas de cuatro");
+    }
 });
+function verificaPeliculaNoExistente(titulo){
+    var ne=0;
+    for(var i=0;i<carrito.length;i++){
+        console.log(titulo);
+        console.log(carrito[i]["title"]);
+        if(carrito[i]["title"]==titulo){
+            ne=1;
+        }
+    }
+    return ne;
+}
 app.delete("/cart/:id", (req, res, next) => {
     console.log("Eliminar pelicula del carrito");
     var idPelicula = req.params.id;

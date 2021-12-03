@@ -174,7 +174,7 @@ DELETE http://localhost:3000/cart
 Content-Type: application/json
 
 ###Agregar pelicula a carrito
-POST http://localhost:3000/cart/1020
+POST http://localhost:3000/cart/1027
 Content-Type: application/json
 
 ###Eliminar pelicula de carrito
